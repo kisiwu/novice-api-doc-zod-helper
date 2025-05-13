@@ -108,7 +108,14 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
         return this._schema instanceof ZodType
     }
     getType(): string {
-        return this.getMostInnerType()?.def?.type || ''
+        let r = this.getMostInnerType()?.def?.type || ''
+        if (r == 'enum') {
+            const enumValues = this.getEnum()
+            if (enumValues.length) {
+                r = typeof enumValues[0]
+            }
+        }
+        return r
     }
     getDescription(): string {
         let r = ''
