@@ -1,7 +1,7 @@
 import { OpenAPI } from '@novice1/api-doc-generator';
 import { before, describe, it } from 'node:test';
 import routing from '@novice1/routing';
-import z from 'zod'
+import * as z from 'zod'
 import { OpenAPIZodHelper } from '../src'
 import { expect } from 'chai';
 
