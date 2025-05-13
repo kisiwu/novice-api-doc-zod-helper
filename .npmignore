@@ -1,6 +1,13 @@
+.github
+src
 docs
-lib
+/test
+/types/files.d.ts
+typedoc.json
 private
+kaukau-*.mjs
+tsconfig.json
+eslint.config.mjs
 
 # Logs
 logs

@@ -1,5 +1,5 @@
 # @novice1/api-doc-zod-helper
-Zod helpers for `@novice1/api-doc-generator` enabling compatibility with `@novice1/validator-zod`.
+Zod4 helpers for `@novice1/api-doc-generator` enabling compatibility with `@novice1/validator-zod`.
 
 ## Installation
 
