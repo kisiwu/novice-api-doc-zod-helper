@@ -204,11 +204,11 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasMin(): boolean {
         const schema = this.getMostInnerType()
-        return !!(schema && ('minLength' in schema))
+        return !!(schema && (('minLength' in schema) || ('minValue' in schema)))
     }
     hasMax(): boolean {
         const schema = this.getMostInnerType()
-        return !!(schema && ('maxLength' in schema))
+        return !!(schema && (('maxLength' in schema) || ('maxValue' in schema)))
     }
     getMin(): number | undefined {
         const schema = this.getMostInnerType()
@@ -216,6 +216,9 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
 
         if ('minLength' in schema && typeof schema.minLength === 'number') {
             return schema.minLength
+        }
+        if ('minValue' in schema && typeof schema.minValue === 'number') {
+            return schema.minValue
         }
         return
     }
@@ -225,6 +228,9 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
 
         if ('maxLength' in schema && typeof schema.maxLength === 'number') {
             return schema.maxLength
+        }
+        if ('maxValue' in schema && typeof schema.maxValue === 'number') {
+            return schema.maxValue
         }
         return
     }
