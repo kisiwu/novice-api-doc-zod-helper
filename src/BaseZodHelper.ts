@@ -137,12 +137,16 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasDefaultValue(): boolean {
         const dt = this.getDefaultType()
-        return !!(dt?.def && 'defaultValue' in dt.def && typeof dt.def.defaultValue === 'function' && typeof dt.def.defaultValue() != 'undefined')
+        return !!(dt?.def && 'defaultValue' in dt.def && typeof dt.def.defaultValue != 'undefined')
     }
     getDefaultValue(): unknown {
         const dt = this.getDefaultType()
-        if (dt?.def && 'defaultValue' in dt.def && typeof dt.def.defaultValue === 'function') {
-            return dt.def.defaultValue()
+        if (dt?.def && 'defaultValue' in dt.def) {
+            if (typeof dt.def.defaultValue === 'function')
+                return dt.def.defaultValue()
+            else {
+                return dt.def.defaultValue
+            }
         }
         return
     }
