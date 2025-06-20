@@ -1,5 +1,5 @@
 import { BaseHelperInterface } from '@novice1/api-doc-generator/lib/helpers/baseHelper';
-import { ZodType } from 'zod';
+import { ZodType } from 'zod/v4';
 
 export abstract class BaseZodHelper implements BaseHelperInterface {
     protected _schema: Partial<ZodType>;
@@ -24,7 +24,17 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
         }
 
         if (result.def?.type === 'pipe' && 'out' in result && result.out instanceof ZodType) {
-            result = result.out
+            //result = result.out
+            if (result.out.def?.type == 'transform' && 
+                'in' in result && 
+                result.in instanceof ZodType &&
+                'out' in result.in &&
+                result.in.out instanceof ZodType
+            ) {
+                result = result.in.out
+            } else {
+                result = result.out
+            }
         }
 
         return result
@@ -114,6 +124,10 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
             if (enumValues.length) {
                 r = typeof enumValues[0]
             }
+        }
+
+        if (r == 'record') {
+            r = 'object'
         }
         return r
     }
