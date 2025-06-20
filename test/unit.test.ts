@@ -34,4 +34,25 @@ describe(() => {
 
         expect(t).to.be.a('string').that.equals('array')
     })
+
+    it('should not have min', () => {
+
+        const h = new OpenAPIZodHelper({ value: z.number().max(5) })
+
+        const t = h.getType()
+        const hasMin = h.hasMin()
+        const getMin = h.getMin()
+        const hasMax = h.hasMax()
+        const getMax = h.getMax()
+
+        console.log('hasMin=', hasMin)
+        console.log('getMin=', getMin)
+        console.log('hasMax=', hasMax)
+        console.log('getMax=', getMax)
+
+        expect(t).to.be.a('string').that.equals('number')
+        expect(hasMin).to.be.a('boolean').that.equals(false)
+        expect(hasMax).to.be.a('boolean').that.equals(true)
+        expect(getMax).to.be.a('number').that.equals(5)
+    })
 })
