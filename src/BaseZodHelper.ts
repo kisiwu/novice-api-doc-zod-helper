@@ -247,6 +247,12 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasMin(): boolean {
         const schema = this.getMostInnerType()
+
+        if (schema?.def?.type === 'object' || schema?.def?.type === 'record') {
+            const v = this.getMeta('minProperties')
+            if (typeof v === 'number') return true
+        }
+
         if (schema?.def?.type === 'array') {
             return !!(schema._zod?.bag && 'minimum' in schema._zod.bag && typeof schema._zod.bag.minimum === 'number')
         }
@@ -257,6 +263,12 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasMax(): boolean {
         const schema = this.getMostInnerType()
+
+        if (schema?.def?.type === 'object' || schema?.def?.type === 'record') {
+            const v = this.getMeta('maxProperties')
+            if (typeof v === 'number') return true
+        }
+
         if (schema?.def?.type === 'array') {
             return !!(schema._zod?.bag && 'maximum' in schema._zod.bag && typeof schema._zod.bag.maximum === 'number')
         }
@@ -268,6 +280,11 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     getMin(): number | undefined {
         const schema = this.getMostInnerType()
         if (!schema) return
+
+        if (schema.def?.type === 'object' || schema?.def?.type === 'record') {
+            const v = this.getMeta('minProperties')
+            if (typeof v === 'number') return v
+        }
 
         if (schema.def?.type === 'array' && schema._zod && typeof schema._zod.bag.minimum === 'number') {
             return schema._zod.bag.minimum
@@ -284,6 +301,11 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     getMax(): number | undefined {
         const schema = this.getMostInnerType()
         if (!schema) return
+
+        if (schema.def?.type === 'object' || schema?.def?.type === 'record') {
+            const v = this.getMeta('maxProperties')
+            if (typeof v === 'number') return v
+        }
 
         if (schema.def?.type === 'array' && schema._zod && typeof schema._zod.bag.maximum === 'number') {
             return schema._zod.bag.maximum

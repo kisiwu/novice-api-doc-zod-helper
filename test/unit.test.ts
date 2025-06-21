@@ -120,4 +120,39 @@ describe('Unit tests', () => {
         expect(hBase64Url.getType()).to.be.a('string').that.equals('string')
         expect(hFile.getType()).to.be.a('string').that.equals('binary')
     })
+
+    it('should have min/max properties', () => {
+
+        const h = new OpenAPIZodHelper({
+            value: z.record(z.string(), z.string())
+                .refine(x => Object.keys(x).length >= 1, { error: `Min ${1} property` })
+                .refine(x => Object.keys(x).length <= 3, { error: `Max ${3} property` })
+                .meta({
+                    minProperties: 1
+                })
+                .meta({
+                    maxProperties: 3
+                })
+        })
+
+        expect(h.hasMin()).to.be.a('boolean').that.equals(true)
+        expect(h.hasMax()).to.be.a('boolean').that.equals(true)
+        expect(h.getMin()).to.be.a('number').that.equals(1)
+        expect(h.getMax()).to.be.a('number').that.equals(3)
+
+        /*
+        z.looseObject({
+                picture: z.url().nonempty().optional()
+            })
+                .refine(x => Object.keys(x).length >= 1, { error: `Min ${1} property` })
+                .refine(x => Object.keys(x).length <= 3, { error: `Max ${3} properties` })
+                .meta({
+                    minProperties: 1
+                })
+                .meta({
+                    maxProperties: 3
+                }).parseAsync({ one: 1, two: 5, three: 8, four: 8 }).then(console.log, console.error)
+                */
+        
+    })
 })
