@@ -27,11 +27,13 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
             //result = result.out
             if (result.out.def?.type == 'transform' &&
                 'in' in result &&
-                result.in instanceof ZodType &&
-                'out' in result.in &&
-                result.in.out instanceof ZodType
+                result.in instanceof ZodType
             ) {
-                result = result.in.out
+                if ('out' in result.in &&
+                result.in.out instanceof ZodType)
+                    result = result.in.out
+                else 
+                    result = result.in
             } else {
                 result = result.out
             }

@@ -30,13 +30,31 @@ describe('Unit tests', () => {
 
         const t = h.getType()
 
-        console.log('t=', t)
-
         expect(t).to.be.a('string').that.equals('array')
-
         expect(h.hasMin()).to.be.a('boolean').that.equals(false)
         expect(h.hasMax()).to.be.a('boolean').that.equals(true)
         expect(h.getMax()).to.be.a('number').that.equals(5)
+
+        const hUnique = new OpenAPIZodHelper({
+            value: arrayUnique(z.array(
+                z.url()
+            ).min(2)).optional()
+        })
+
+        expect(hUnique.getType()).to.be.a('string').that.equals('array')
+        expect(hUnique.hasMin()).to.be.a('boolean').that.equals(true)
+        expect(hUnique.hasMax()).to.be.a('boolean').that.equals(false)
+        expect(hUnique.getMin()).to.be.a('number').that.equals(2)
+
+        const hSingle = new OpenAPIZodHelper({
+            value: arraySingle(z.array(
+                z.url()
+            )).optional()
+        })
+
+        expect(hSingle.getType()).to.be.a('string').that.equals('array')
+        expect(hSingle.hasMin()).to.be.a('boolean').that.equals(false)
+        expect(hSingle.hasMax()).to.be.a('boolean').that.equals(false)
     })
 
     it('should not have min', () => {
@@ -63,7 +81,7 @@ describe('Unit tests', () => {
     it('should have params', () => {
 
         const routeSchema = {
-            params: z.object({ 
+            params: z.object({
                 id: z.string().min(1)
             })
         }
@@ -153,6 +171,6 @@ describe('Unit tests', () => {
                     maxProperties: 3
                 }).parseAsync({ one: 1, two: 5, three: 8, four: 8 }).then(console.log, console.error)
                 */
-        
+
     })
 })
