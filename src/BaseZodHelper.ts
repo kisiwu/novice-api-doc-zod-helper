@@ -222,6 +222,9 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasMin(): boolean {
         const schema = this.getMostInnerType()
+        if (schema?.def?.type === 'array') {
+            return !!(schema._zod?.bag && 'minimum' in schema._zod.bag && typeof schema._zod.bag.minimum === 'number')
+        }
         return !!(schema && (
             ('minLength' in schema && typeof schema.minLength === 'number' && isFinite(schema.minLength)) || 
             ('minValue' in schema && typeof schema.minValue === 'number' && isFinite(schema.minValue))
@@ -229,6 +232,9 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     }
     hasMax(): boolean {
         const schema = this.getMostInnerType()
+        if (schema?.def?.type === 'array') {
+            return !!(schema._zod?.bag && 'maximum' in schema._zod.bag && typeof schema._zod.bag.maximum === 'number')
+        }
         return !!(schema && (
             ('maxLength' in schema && typeof schema.maxLength === 'number' && isFinite(schema.maxLength)) || 
             ('maxValue' in schema && typeof schema.maxValue === 'number' && isFinite(schema.maxValue))
@@ -237,6 +243,10 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     getMin(): number | undefined {
         const schema = this.getMostInnerType()
         if (!schema) return
+
+        if (schema.def?.type === 'array' &&  schema._zod && typeof schema._zod.bag.minimum === 'number') {
+            return schema._zod.bag.minimum
+        }
 
         if ('minLength' in schema && typeof schema.minLength === 'number') {
             return schema.minLength
@@ -249,6 +259,10 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
     getMax(): number | undefined {
         const schema = this.getMostInnerType()
         if (!schema) return
+
+        if (schema.def?.type === 'array' &&  schema._zod && typeof schema._zod.bag.maximum === 'number') {
+            return schema._zod.bag.maximum
+        }
 
         if ('maxLength' in schema && typeof schema.maxLength === 'number') {
             return schema.maxLength

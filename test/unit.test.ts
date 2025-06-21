@@ -17,7 +17,7 @@ describe(() => {
 
     it('should be an array', () => {
 
-        const h = new OpenAPIZodHelper({ value: arrayUnique(arraySingle(
+        const complicatedArraySchema = arrayUnique(arraySingle(
             z.array(
                 z.enum([
                     'solution',
@@ -25,14 +25,20 @@ describe(() => {
                     'createdBy',
                     'lastUpdatedBy'
                 ])
-            )))
-            .optional() })
+            ).max(5)))
+            .optional()
+
+        const h = new OpenAPIZodHelper({ value: complicatedArraySchema })
 
         const t = h.getType()
 
         console.log('t=', t)
 
         expect(t).to.be.a('string').that.equals('array')
+
+        expect(h.hasMin()).to.be.a('boolean').that.equals(false)
+        expect(h.hasMax()).to.be.a('boolean').that.equals(true)
+        expect(h.getMax()).to.be.a('number').that.equals(5)
     })
 
     it('should not have min', () => {
@@ -54,5 +60,23 @@ describe(() => {
         expect(hasMin).to.be.a('boolean').that.equals(false)
         expect(hasMax).to.be.a('boolean').that.equals(true)
         expect(getMax).to.be.a('number').that.equals(5)
+    })
+
+    it('should have params', () => {
+
+        const routeSchema = {
+            params: z.object({ 
+                id: z.string().min(1)
+            })
+        }
+
+        const hRoot = new OpenAPIZodHelper({ value: routeSchema, isRoot: true })
+
+        const hParams = new OpenAPIZodHelper({ value: routeSchema.params })
+
+        expect(hRoot.isValid()).to.be.a('boolean').that.equals(false)
+        expect(hParams.isValid()).to.be.a('boolean').that.equals(true)
+
+        expect(Object.keys(hParams.getChildren())).to.be.an('array').that.contains('id')
     })
 })
