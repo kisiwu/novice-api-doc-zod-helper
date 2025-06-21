@@ -25,8 +25,8 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
 
         if (result.def?.type === 'pipe' && 'out' in result && result.out instanceof ZodType) {
             //result = result.out
-            if (result.out.def?.type == 'transform' && 
-                'in' in result && 
+            if (result.out.def?.type == 'transform' &&
+                'in' in result &&
                 result.in instanceof ZodType &&
                 'out' in result.in &&
                 result.in.out instanceof ZodType
@@ -118,7 +118,8 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
         return this._schema instanceof ZodType
     }
     getType(): string {
-        let r = this.getMostInnerType()?.def?.type || ''
+        const schema = this.getMostInnerType()
+        let r = schema?.def?.type || ''
         if (r == 'enum') {
             const enumValues = this.getEnum()
             if (enumValues.length) {
@@ -126,8 +127,32 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
             }
         }
 
-        if (r == 'record') {
+        if (r == 'bigint') {
+            r = 'integer'
+            if (schema?.def && 'format' in schema.def && typeof schema.def.format === 'string') {
+                if (schema.def.format == 'int64' ||
+                    schema.def.format == 'uint64')
+                    r = 'int64'
+            }
+
+        } else if (r == 'string' && schema?.def && 'format' in schema.def && typeof schema.def.format === 'string') {
+            if (['email', 'url', 'uri', 'uuid', 'guid'].includes(schema.def.format))
+                r = schema.def.format
+        } else if (r == 'number' && schema?.def && 'format' in schema.def && typeof schema.def.format === 'string') {
+            if (schema.def.format == 'safeint')
+                r = 'integer'
+            else if (schema.def.format == 'int32' ||
+                schema.def.format == 'uint32')
+                r = 'int32'
+            else if (schema.def.format == 'int64' ||
+                schema.def.format == 'uint64')
+                r = 'int64'
+            else if (schema.def.format == 'float32' || schema.def.format == 'float64')
+                r = 'float'
+        } else if (r == 'record') {
             r = 'object'
+        } else if (r == 'file') {
+            r = 'binary'
         }
         return r
     }
@@ -226,7 +251,7 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
             return !!(schema._zod?.bag && 'minimum' in schema._zod.bag && typeof schema._zod.bag.minimum === 'number')
         }
         return !!(schema && (
-            ('minLength' in schema && typeof schema.minLength === 'number' && isFinite(schema.minLength)) || 
+            ('minLength' in schema && typeof schema.minLength === 'number' && isFinite(schema.minLength)) ||
             ('minValue' in schema && typeof schema.minValue === 'number' && isFinite(schema.minValue))
         ))
     }
@@ -236,7 +261,7 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
             return !!(schema._zod?.bag && 'maximum' in schema._zod.bag && typeof schema._zod.bag.maximum === 'number')
         }
         return !!(schema && (
-            ('maxLength' in schema && typeof schema.maxLength === 'number' && isFinite(schema.maxLength)) || 
+            ('maxLength' in schema && typeof schema.maxLength === 'number' && isFinite(schema.maxLength)) ||
             ('maxValue' in schema && typeof schema.maxValue === 'number' && isFinite(schema.maxValue))
         ))
     }
@@ -244,7 +269,7 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
         const schema = this.getMostInnerType()
         if (!schema) return
 
-        if (schema.def?.type === 'array' &&  schema._zod && typeof schema._zod.bag.minimum === 'number') {
+        if (schema.def?.type === 'array' && schema._zod && typeof schema._zod.bag.minimum === 'number') {
             return schema._zod.bag.minimum
         }
 
@@ -260,7 +285,7 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
         const schema = this.getMostInnerType()
         if (!schema) return
 
-        if (schema.def?.type === 'array' &&  schema._zod && typeof schema._zod.bag.maximum === 'number') {
+        if (schema.def?.type === 'array' && schema._zod && typeof schema._zod.bag.maximum === 'number') {
             return schema._zod.bag.maximum
         }
 
