@@ -19,23 +19,32 @@ export abstract class BaseZodHelper implements BaseHelperInterface {
 
         let result = this._schema;
 
-        while (result.def && 'innerType' in result.def) {
-            result = result.def.innerType as Partial<ZodType>
-        }
+        while ((result.def && 'innerType' in result.def) || (result.def?.type === 'pipe' && 'out' in result && result.out instanceof ZodType)) {
+            
+            if (result.def && 'innerType' in result.def)
+                result = result.def.innerType as Partial<ZodType>
 
-        if (result.def?.type === 'pipe' && 'out' in result && result.out instanceof ZodType) {
-            //result = result.out
-            if (result.out.def?.type == 'transform' &&
-                'in' in result &&
-                result.in instanceof ZodType
-            ) {
-                if ('out' in result.in &&
-                result.in.out instanceof ZodType)
-                    result = result.in.out
-                else 
-                    result = result.in
-            } else {
-                result = result.out
+            if (result.def?.type === 'pipe' && 'out' in result && result.out instanceof ZodType) {
+                //result = result.out
+                if (result.out.def?.type == 'transform' &&
+                    'in' in result &&
+                    result.in instanceof ZodType
+                ) {
+                    if ('out' in result.in &&
+                        result.in.out instanceof ZodType)
+                        result = result.in.out
+                    else
+                        result = result.in
+                } else if (
+                    'in' in result && result.in instanceof ZodType &&
+                    result.in.def?.type == 'transform' &&
+                    'out' in result &&
+                    result.out instanceof ZodType
+                ) {
+                    result = result.out
+                } else {
+                    result = result.out
+                }
             }
         }
 

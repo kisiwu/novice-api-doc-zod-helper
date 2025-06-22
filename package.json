@@ -1,6 +1,6 @@
 {
   "name": "@novice1/api-doc-zod-helper",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.29.0",
     "@novice1/routing": "^2.0.2",
-    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@stylistic/eslint-plugin": "^4.4.1",
     "@types/chai": "^5.2.2",
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.3",

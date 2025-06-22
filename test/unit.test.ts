@@ -173,4 +173,16 @@ describe('Unit tests', () => {
                 */
 
     })
+
+    it('should have min max with preprocess', () => {
+        const schema = z.preprocess(x => typeof x === 'string' ? parseInt(x) : x, z.int().min(1).max(55).default(50).optional())
+
+        const h = new OpenAPIZodHelper({ value: schema })
+
+        expect(h.getType()).to.be.a('string').that.equals('integer');
+        expect(h.hasMin()).to.be.a('boolean').that.equals(true);
+        expect(h.hasMax()).to.be.a('boolean').that.equals(true);
+        expect(h.getMin()).to.be.a('number').that.equals(1);
+        expect(h.getMax()).to.be.a('number').that.equals(55);
+    })
 })
