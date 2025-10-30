@@ -185,4 +185,10 @@ describe('Unit tests', () => {
         expect(h.getMin()).to.be.a('number').that.equals(1);
         expect(h.getMax()).to.be.a('number').that.equals(55);
     })
+
+    it('toJSONSchema', () => {
+        const schema = z.preprocess(x => typeof x === 'string' ? parseInt(x) : x, z.int().min(1).max(55).default(50).optional())
+
+        console.log(z.toJSONSchema(schema))
+    })
 })
