@@ -1,5 +1,5 @@
 import { BaseHelperInterface } from '@novice1/api-doc-generator/lib/helpers/baseHelper';
-import { ZodType } from 'zod/v4';
+import { ZodType } from 'zod';
 
 export abstract class BaseZodHelper implements BaseHelperInterface {
     protected _schema: Partial<ZodType>;
